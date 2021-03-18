@@ -1,0 +1,12 @@
+{
+  "name": "appTemplate",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "docker-compose build",
+    "build-dev": "docker-compose -f docker-compose.dev.yml build",
+    "start": "docker-compose up",
+    "develop": "docker-compose -f docker-compose.dev.yml up"
+  }
+}
