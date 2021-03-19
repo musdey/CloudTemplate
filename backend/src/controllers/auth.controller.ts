@@ -4,14 +4,21 @@ import bcrypt from 'bcryptjs'
 import { Handler, Request, Response } from 'express';
 import User from '../models/User';
 import Role from '../models/Role';
+import { UserValidator, getValidationErrorData } from '../lib/validator'
+import errors from '../lib/errors'
 
 const secret = process.env.JWT_SECRET || "test"
 
 const signup: Handler = async (req: Request, res: Response) => {
   try {
 
+    const validationResult = await UserValidator.validate(req.body)
+    console.log(validationResult)
+    if (validationResult.length !== 0) {
+      return res.status(400).send(getValidationErrorData(validationResult))
+    }
+
     const user = new User({
-      username: req.body.username,
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, 8),
       firstName: req.body.firstName,
@@ -19,7 +26,6 @@ const signup: Handler = async (req: Request, res: Response) => {
     });
 
     const createdUser = await user.save()
-    console.log(createdUser)
     const userRole = await Role.findOne({ name: "USER" })
     createdUser.role = userRole?._id
     await createdUser.save()

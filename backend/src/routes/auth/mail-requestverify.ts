@@ -50,4 +50,4 @@ const verifyMail = (req: Request, res: Response) => {
   });
 };
 
-export default signin
+export default verifyMail

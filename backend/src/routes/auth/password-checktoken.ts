@@ -7,7 +7,7 @@ const checkToken: Handler = async (req, res) => {
   }
   const forgotPWDocument = await ForgotPassword.findOne({
     resetPasswordToken: req.params.token,
-    resetPasswordExpires: { $gt: Date.now() },
+    resetPasswordExpires: { $gt: new Date() },
   })
   if (!forgotPWDocument) {
     res.status(400).end('Password reset token is invalid or has expired.')

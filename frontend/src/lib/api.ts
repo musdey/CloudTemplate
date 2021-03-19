@@ -4,13 +4,13 @@ const protocol = 'http://'
 const host = window.location.hostname
 const port = ':3000'
 
-const register = async (
+const signup = async (
   email: string, password: string, ownerName: string,
   phoneNumber: string, shopName: string, seats: number,
   address: string): Promise<any> => {
   const addr = { city: 'vienna' }
   const obj = { email, password, shopName, owner: ownerName, phoneNumber, address: addr, availableSeats: seats }
-  const url = `${protocol + host + port}/register`
+  const url = `${protocol + host + port}/api/auth/signup`
   try {
     const result = await fetch(url, {
       method: 'post',
@@ -23,7 +23,7 @@ const register = async (
   }
 }
 
-const login = async (email: string, password: string): Promise<any> => {
+const signin = async (email: string, password: string): Promise<any> => {
   const obj = { email, password }
   const url = `${protocol + host + port}/login`
   const result = await fetch(url, {

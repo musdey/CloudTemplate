@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import User from '../models/User'
 
 const checkDuplicateUsernameOrEmail = (req: Request, res: Response, next: NextFunction) => {
+
   // // Username
   // User.findOne({
   //   username: req.body.username

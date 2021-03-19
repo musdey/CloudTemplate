@@ -6,18 +6,15 @@ const UserValidator: Validator = new Validator({
   username: {
     type: String,
   },
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true
+  },
   password: {
-    type: String,
-    required: true,
-  },
-  shopId: {
-    type: String,
-  },
-  shopName: {
-    type: String,
-    required: true,
-  },
-  owner: {
     type: String,
     required: true,
   },
@@ -27,7 +24,6 @@ const UserValidator: Validator = new Validator({
   },
   phoneNumber: {
     type: String,
-    required: true,
   },
   address: {
     city: {
@@ -45,11 +41,6 @@ const UserValidator: Validator = new Validator({
     streetExtra: {
       type: String,
     },
-    required: true,
-  },
-  availableSeats: {
-    type: String,
-    required: false,
   },
 })
 const UserCheckinValidator = new Validator({

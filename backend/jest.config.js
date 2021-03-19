@@ -3,10 +3,13 @@ module.exports = {
   roots: [''],
   globals: {
     'ts-jest': {
-      tsConfig: 'tsconfig.json',
+      tsconfig: 'tsconfig.json',
     },
   },
-  testMatch: ['**/__tests__/**/*.+(ts|tsx|js)', '**/?(*.)+(spec|test).+(ts|tsx|js)'],
+  testMatch: [
+    '**/__tests__/**/*.+(ts|tsx|js)',
+    '**/?(*.)+(spec|test).+(ts|tsx|js)',
+  ],
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',
   },

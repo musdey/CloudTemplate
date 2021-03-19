@@ -2,10 +2,13 @@ import express, { Request, Response } from 'express'
 import { signup, signin } from '../controllers/auth.controller'
 import { allAccess, userBoard, adminBoard, moderatorBoard } from '../controllers/user.controller'
 import authJwt from '../middleware/authJwt'
+import verifyBody from '../middleware/verifyBody'
 
 import verifySignUp from '../middleware/verifySignup'
 
 const router = express.Router()
+
+router.post('*', verifyBody)
 
 // Route für alle
 router.get("/", (req, res) => {
