@@ -5,7 +5,6 @@ import { Handler, Request, Response } from 'express';
 import User from '../models/User';
 import Role from '../models/Role';
 import { UserValidator, getValidationErrorData } from '../lib/validator'
-import errors from '../lib/errors'
 
 const secret = process.env.JWT_SECRET || "test"
 
@@ -13,7 +12,6 @@ const signup: Handler = async (req: Request, res: Response) => {
   try {
 
     const validationResult = await UserValidator.validate(req.body)
-    console.log(validationResult)
     if (validationResult.length !== 0) {
       return res.status(400).send(getValidationErrorData(validationResult))
     }
@@ -22,7 +20,10 @@ const signup: Handler = async (req: Request, res: Response) => {
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, 8),
       firstName: req.body.firstName,
-      lastName: req.body.lastName
+      lastName: req.body.lastName,
+      username: req.body.username || undefined,
+      phoneNumber: req.body.phoneNumber || undefined,
+      address: req.body.address || undefined
     });
 
     const createdUser = await user.save()

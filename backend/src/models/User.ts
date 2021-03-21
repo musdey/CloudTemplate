@@ -17,6 +17,7 @@ interface IUser extends Document {
     streetNumber: string
     streetExtra: string
   }
+  emailIsVerified: boolean
 }
 
 const UserSchema = new Schema(
@@ -44,7 +45,7 @@ const UserSchema = new Schema(
       required: true,
       unique: true,
     },
-    email_is_verified: {
+    emailIsVerified: {
       type: Boolean,
       default: false,
     },
