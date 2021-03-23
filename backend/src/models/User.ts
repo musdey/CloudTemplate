@@ -18,6 +18,7 @@ interface IUser extends Document {
     streetExtra: string
   }
   emailIsVerified: boolean
+  otpActivated: boolean
 }
 
 const UserSchema = new Schema(
@@ -74,6 +75,10 @@ const UserSchema = new Schema(
         type: String,
       },
     },
+    otpActivated: {
+      type: Boolean,
+      default: false
+    }
   },
   { strict: false, versionKey: false }
 )

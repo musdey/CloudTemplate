@@ -5,8 +5,11 @@ import { Handler, Request, Response } from 'express';
 import User from '../models/User';
 import Role from '../models/Role';
 import { UserValidator, getValidationErrorData } from '../lib/validator'
+import UserLoginOTP from '../models/UserLoginOTP'
+import sendSMS from '../service/smsService'
 
 const secret = process.env.JWT_SECRET || "test"
+const EXPIRYTIME = 10 * 60 * 1000 // 10 minutes
 
 const signup: Handler = async (req: Request, res: Response) => {
   try {
@@ -39,36 +42,123 @@ const signup: Handler = async (req: Request, res: Response) => {
 const signin: Handler = async (req: Request, res: Response) => {
 
   try {
-    const user = await User.findOne({ username: req.body.username })
+    const user = await User.findOne({ email: req.body.email })
 
-    if (user) {
-      const passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password
-      );
-      if (passwordIsValid) {
-        const token = jwt.sign({ id: user.id }, secret, {
-          expiresIn: 86400 // 24 hours
-        });
-        return res.status(200).send({
-          id: user._id,
-          username: user.username,
-          email: user.email,
-          accessToken: token
-        });
-      } else {
-        return res.status(401).send({
-          accessToken: null,
-          message: "Invalid Password!"
-        });
-      }
-
-    } else {
+    if (!user) {
       return res.status(404).send({ message: "User Not found." });
     }
+
+    const passwordIsValid = bcrypt.compareSync(
+      req.body.password,
+      user.password
+    );
+
+    if (!passwordIsValid) {
+      return res.status(401).send({
+        accessToken: null,
+        message: "Invalid Password!"
+      });
+    }
+
+    if (user.otpActivated) {
+      await createAndDeliverOTP(user)
+      return res.status(201).send({ message: "OTP successfully created." })
+    }
+    const token = jwt.sign({ id: user.id }, secret, {
+      expiresIn: 86400 // 24 hours
+    });
+    return res.status(200).send({
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      accessToken: token
+    });
+
   } catch (err) {
     return res.status(500).send({ message: err });
   }
 }
 
-export { signin, signup }
+const requestOTP: Handler = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findOne({ email: req.body.email })
+
+    if (!user) {
+      return res.status(404).send({ message: "User Not found." });
+    }
+
+    const passwordIsValid = bcrypt.compareSync(
+      req.body.password,
+      user.password
+    );
+
+    if (!passwordIsValid) {
+      return res.status(401).send({
+        accessToken: null,
+        message: "Invalid Password!"
+      });
+    }
+
+    await createAndDeliverOTP(user)
+
+    return res.status(201).send({ message: "OTP successfully created." })
+
+  } catch (err) {
+    return res.status(500).send({ message: err });
+  }
+}
+
+const createAndDeliverOTP = async (user: any) => {
+  const oneTimePwPin = Math.floor(100000 + Math.random() * 900000).toString()
+  const userOTPObj = new UserLoginOTP({ email: user.email, otp: oneTimePwPin, timestamp: Date.now(), otpExpires: Date.now() + EXPIRYTIME })
+  const result = await userOTPObj.save()
+  console.log(result)
+  await sendSMS(user.email, user.phoneNumber, oneTimePwPin)
+}
+
+const signinWithOTP: Handler = async (req: Request, res: Response) => {
+
+  try {
+    const user = await User.findOne({ email: req.body.email })
+
+    if (!user) {
+      return res.status(404).send({ message: "User Not found." });
+    }
+
+    const passwordIsValid = bcrypt.compareSync(
+      req.body.password,
+      user.password
+    );
+
+    if (!passwordIsValid) {
+      return res.status(401).send({
+        accessToken: null,
+        message: "Invalid Password!"
+      });
+    }
+    const otp = await UserLoginOTP.findOne({ email: req.body.email, otpExpires: { $gt: new Date() } })
+    if (!otp || otp.otp !== req.body.otp) {
+      return res.status(401).send({ message: "OTP not found or incorrect" })
+    }
+
+    const token = jwt.sign({ id: user.id }, secret, {
+      expiresIn: 86400 // 24 hours
+    });
+
+    otp.otpExpires = new Date()
+    await otp.save()
+    return res.status(200).send({
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      accessToken: token
+    });
+
+  } catch (err) {
+    return res.status(500).send({ message: err });
+
+  }
+
+}
+
+export { signin, signup, signinWithOTP, requestOTP }

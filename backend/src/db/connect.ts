@@ -13,13 +13,13 @@ const connect = async (
   defaultTimeoutForQuery?: number
 ): Promise<void> => {
 
-  let connectionString = `mongodb://${username}:${password}@${host}:${port}/${database}`
-  if (process.env.NODE_ENV !== "production") {
-    connectionString = `mongodb://${host}:${port}/${database}`
+  let connectionString = `mongodb://${host}:${port}/${database}`
+  if (process.env.NODE_ENV === "production") {
+    connectionString = `mongodb://${username}:${password}@${host}:${port}/${database}`
   }
   try {
     await mongoose.connect(
-      `mongodb://${username}:${password}@${host}:${port}/${database}`,
+      connectionString,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true

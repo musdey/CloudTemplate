@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express'
-import { signup, signin } from '../controllers/auth.controller'
+import { signup, signin, signinWithOTP, requestOTP } from '../controllers/auth.controller'
 import { passwordReset, passwordResetRequest, passwordResetCheckToken } from '../controllers/pw.controller'
 import { allAccess, userBoard, adminBoard, moderatorBoard } from '../controllers/user.controller'
 import { verifyMail } from '../controllers/verifyMail.controller'
@@ -14,6 +14,8 @@ router.post(
   "/api/auth/signup", verifySignUp.checkDuplicateUsernameOrEmail, signup
 );
 router.post("/api/auth/signin", signin)
+router.post("/api/auth/signinWithOTP", signinWithOTP)
+router.post("/api/auth/requestOTP", requestOTP)
 router.get("/api/pw/reset-pw-request", passwordResetRequest)
 router.get("/api/pw/reset-pw-check", passwordResetCheckToken)
 router.post("/api/pw/reset-pw", passwordReset)

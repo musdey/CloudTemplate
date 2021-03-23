@@ -4,6 +4,7 @@
     ".git",
     "node_modules/**/node_modules"
   ],
+  "exec": "ts-node ./src/index.ts",
   "verbose": true,
   "execMap": {
     "ts": "node --require ts-node/register"
