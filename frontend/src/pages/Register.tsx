@@ -64,7 +64,7 @@ const Register: React.FunctionComponent = () => {
   const [buttonClickable, setButtonClickable] = React.useState(false)
 
   const onsubmit = async (values: Values) => {
-    const result = await api.register(
+    const result = await api.signup(
       values.email,
       values.password,
       values.ownerName,

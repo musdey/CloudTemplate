@@ -62,7 +62,7 @@ const Login: React.FunctionComponent = () => {
   const [buttonClickable, setButtonClickable] = React.useState(false)
 
   const onsubmit = async (values: Values) => {
-    const result = await api.login(values.email, values.password)
+    const result = await api.signin(values.email, values.password)
     alert(result)
   }
 

@@ -60,4 +60,4 @@ const getShop = async (shopId: string): Promise<any> => {
   }
 }
 
-export default { register, login, logout, getShop }
+export default { signin, signup, logout, getShop }

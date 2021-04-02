@@ -62,7 +62,6 @@ interface Values {
 const ShopDetail: React.FunctionComponent = () => {
   const { loggedIn, shop, login, logout } = useAuth()
   const [qr, setQr] = React.useState('')
-  const { shopId } = useParams()
   const [buttonClickable, setButtonClickable] = React.useState(false)
   const [shopName, setShopName] = React.useState('')
   const [address, setAddress] = React.useState()
@@ -74,7 +73,11 @@ const ShopDetail: React.FunctionComponent = () => {
   const history = useHistory()
 
   const apiCall = async () => {
-    const data = await api.getShop(shopId)
+    const data = {
+      shopName: 'name',
+      qr: 'qr',
+    }
+    //const data = await api.getShop(shopId)
     setShopName(data.shopName)
     setImgUri(data.qr)
     console.log(data)
@@ -143,7 +146,7 @@ const ShopDetail: React.FunctionComponent = () => {
 
   return (
     <Container component="main" maxWidth="xs">
-      {imgUri && (
+      {/* {imgUri && (
         <div>
           <PDFDownloadLink
             document={Document(tableNr, 'A4', shopName, imgUri)}
@@ -151,7 +154,7 @@ const ShopDetail: React.FunctionComponent = () => {
           >
             {({ blob, url, loading, error }) => {
               if (!loading) {
-                setA4PDFURL(url)
+                setA4PDFURL('url')
               }
             }}
           </PDFDownloadLink>
@@ -161,12 +164,12 @@ const ShopDetail: React.FunctionComponent = () => {
           >
             {({ blob, url, loading, error }) => {
               if (!loading) {
-                setA5PDFURL(url)
+                setA5PDFURL('url')
               }
             }}
           </PDFDownloadLink>
         </div>
-      )}
+      )} */}
 
       <CssBaseline />
       <div className={classes.paper}>

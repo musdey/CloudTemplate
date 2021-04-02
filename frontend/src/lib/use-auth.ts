@@ -21,7 +21,7 @@ const useProvideAuth = (): AuthContextInterface => {
   const login = async (email: string, password: string): Promise<boolean> => {
     return new Promise(async (resolve, reject) => {
       await api
-        .login(email, password)
+        .signin(email, password)
         .then(async (data) => {
           console.log(data)
           setShop(data)
