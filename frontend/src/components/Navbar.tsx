@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react'
+import React from 'react'
 import { fade, makeStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -20,10 +20,15 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import InboxIcon from '@material-ui/icons/MoveToInbox'
-import { SwipeableDrawer } from '@material-ui/core'
+import { Button, SwipeableDrawer } from '@material-ui/core'
 import MailIcon from '@material-ui/icons/Mail'
+import { useAuth } from '../lib/use-auth'
 
 const useStyles = makeStyles((theme) => ({
+  signin: {
+    color: 'white',
+    textColor: 'white',
+  },
   list: {
     width: 250,
   },
@@ -94,19 +99,12 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const PrimarySearchAppBar: React.FunctionComponent = () => {
-  const parentRef = useRef<HTMLDivElement>()
   const classes = useStyles()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null)
   const isMenuOpen = Boolean(anchorEl)
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
-
-  const [state, setState] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-  })
+  const { signout, loggedIn } = useAuth()
   const [drawerState, setDrawerState] = React.useState(false)
 
   const handleProfileMenuOpen = (event: any) => {
@@ -139,6 +137,14 @@ const PrimarySearchAppBar: React.FunctionComponent = () => {
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem
+        onClick={() => {
+          signout()
+          handleMenuClose()
+        }}
+      >
+        Logout
+      </MenuItem>
     </Menu>
   )
 
@@ -199,7 +205,6 @@ const PrimarySearchAppBar: React.FunctionComponent = () => {
     }
 
     setDrawerState(open)
-    //setState({ ...state, [anchor]: open })
   }
 
   const list = (anchor: Anchor) => (
@@ -243,20 +248,21 @@ const PrimarySearchAppBar: React.FunctionComponent = () => {
     <div className={classes.grow}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            edge="start"
-            onClick={(event) => {
-              console.log('buton clikckdS')
-              toggleDrawer(true, event)
-            }}
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="open drawer"
-          >
-            <MenuIcon />
-          </IconButton>
+          {loggedIn && (
+            <IconButton
+              edge="start"
+              onClick={(event) => {
+                toggleDrawer(true, event)
+              }}
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="open drawer"
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
           <Typography className={classes.title} variant="h6" noWrap>
-            Material-UI
+            AppName
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
@@ -272,28 +278,42 @@ const PrimarySearchAppBar: React.FunctionComponent = () => {
             />
           </div>
           <div className={classes.grow} />
-          <div className={classes.sectionDesktop}>
-            <IconButton aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={17} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-          </div>
+          {loggedIn ? (
+            <div className={classes.sectionDesktop}>
+              <IconButton aria-label="show 4 new mails" color="inherit">
+                <Badge badgeContent={4} color="secondary">
+                  <MailIcon />
+                </Badge>
+              </IconButton>
+              <IconButton
+                aria-label="show 17 new notifications"
+                color="inherit"
+              >
+                <Badge badgeContent={17} color="secondary">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+              <IconButton
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+            </div>
+          ) : (
+            <div>
+              <Button className={classes.signin} href="/login">
+                SignIn
+              </Button>
+              <Button className={classes.search} href="/register">
+                SignUp
+              </Button>
+            </div>
+          )}
           <div className={classes.sectionMobile}>
             <IconButton
               aria-label="show more"

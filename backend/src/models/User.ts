@@ -1,5 +1,4 @@
 import { Document, Schema, Model, model } from 'mongoose'
-import Role from './Role'
 
 interface IUser extends Document {
   //_id let it autogenerate by mongodb
@@ -35,11 +34,9 @@ const UserSchema = new Schema(
     },
     firstName: {
       type: String,
-      required: true,
     },
     lastName: {
       type: String,
-      required: true
     },
     email: {
       type: String,
@@ -56,7 +53,6 @@ const UserSchema = new Schema(
     },
     phoneNumber: {
       type: String,
-      unique: true,
     },
     address: {
       city: {

@@ -15,19 +15,9 @@ import { Formik, Field, Form } from 'formik'
 import { TextField } from 'formik-material-ui'
 import api from '../lib/api'
 import { Persist } from 'formik-persist'
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  )
-}
+import Copyright from '../components/Copyright'
+import Snackbar from '@material-ui/core/Snackbar'
+import Alert from '@material-ui/lab/Alert'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -50,30 +40,38 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 interface Values {
-  shopName: string
   email: string
   password: string
   password2: string
-  ownerName: string
   phoneNumber: string
-  seats: number
-  address: string
 }
+
+export type Color = 'success' | 'info' | 'warning' | 'error'
 
 const Register: React.FunctionComponent = () => {
   const [buttonClickable, setButtonClickable] = React.useState(false)
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false)
+  const [snackbarText, setSnackbarText] = React.useState('')
+  const [snackbarType, setSnackbarType] = React.useState<Color | undefined>(
+    'error'
+  )
 
   const onsubmit = async (values: Values) => {
-    const result = await api.signup(
-      values.email,
-      values.password,
-      values.ownerName,
-      values.phoneNumber,
-      values.shopName,
-      values.seats,
-      values.address
-    )
-    console.log(JSON.stringify(result))
+    try {
+      const result = await api.signup(values.email, values.password)
+      console.log(result)
+      if (result.status === 200) {
+        setSnackbarText('Successfully registered user')
+        setSnackbarType('success')
+      } else {
+        setSnackbarText(result.body.message)
+        setSnackbarType('error')
+      }
+    } catch (err) {
+      setSnackbarText(err)
+      setSnackbarType('error')
+    }
+    setSnackbarOpen(true)
   }
 
   const classes = useStyles()
@@ -86,18 +84,14 @@ const Register: React.FunctionComponent = () => {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Für Registro registrieren
+          Register
         </Typography>
         <Formik
           initialValues={{
             email: '',
             password: '',
-            ownerName: '',
             password2: '',
             phoneNumber: '',
-            shopName: '',
-            address: '',
-            seats: 0,
           }}
           validate={(values) => {
             const errors: Partial<Values> = {}
@@ -124,16 +118,10 @@ const Register: React.FunctionComponent = () => {
               errors.password2 = 'Die Passwörter stimmen nicht überein'
             }
 
-            if (!values.shopName) {
-              errors.shopName = 'Pflichtfeld'
-            }
-            if (!values.ownerName) {
-              errors.ownerName = 'Pflichtfeld'
-            }
             // TODO: Find perfekt regex here
-            if (!values.phoneNumber) {
-              errors.phoneNumber = 'Pflichtfeld'
-            }
+            // if (!values.phoneNumber) {
+            //   errors.phoneNumber = 'Pflichtfeld'
+            // }
             /* else if (!/^\+(?:[0-9] ?){6,14}[0-9]$/.test(values.phoneNumber)) {
               errors.phoneNumber = 'Bitte eine international gültige Telefonnummer eingeben'
             } */
@@ -154,18 +142,8 @@ const Register: React.FunctionComponent = () => {
               margin="normal"
               required
               fullWidth
-              id="shopName"
-              label="Name Geschäft"
-              name="shopName"
-            />
-            <Field
-              component={TextField}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
               id="email"
-              label="E-Mail Addresse"
+              label="E-Mail address"
               name="email"
               autoComplete="email"
             />
@@ -177,7 +155,7 @@ const Register: React.FunctionComponent = () => {
               required
               fullWidth
               id="password"
-              label="Passwort"
+              label="Password"
               name="password"
               type="password"
             />
@@ -189,23 +167,13 @@ const Register: React.FunctionComponent = () => {
               required
               fullWidth
               name="password2"
-              label="Passwort bestätigen"
+              label="Confirm password"
               type="password"
               id="password2"
               autoComplete="current-password"
             />
-            <Field
-              component={TextField}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="ownerName"
-              label="Name InhaberIn"
-              name="ownerName"
-              autoComplete="email"
-            />
-            <Field
+
+            {/* <Field
               component={TextField}
               variant="outlined"
               margin="normal"
@@ -215,32 +183,10 @@ const Register: React.FunctionComponent = () => {
               label="Telefonnummer"
               name="phoneNumber"
               autoComplete="phone"
-            />
-            <Field
-              component={TextField}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="address"
-              label="Adresse"
-              name="address"
-              autoComplete="addres"
-            />
-            <Field
-              component={TextField}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="seats"
-              label="Sitzplätze"
-              name="seats"
-            />
-
+            /> */}
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
-              label="Zugang speichern"
+              label="Save credentials"
             />
             <Button
               type="submit"
@@ -250,17 +196,17 @@ const Register: React.FunctionComponent = () => {
               color="primary"
               className={classes.submit}
             >
-              Registrieren
+              Register
             </Button>
             <Grid container>
               <Grid item xs>
                 <Link href="/password-reset" variant="body2">
-                  Passwort vergessen?
+                  Forgot password?
                 </Link>
               </Grid>
               <Grid item>
                 <Link href="/login" variant="body2">
-                  {'Bereits registriert? Hier zum Login!'}
+                  {'Already registered? Login here!'}
                 </Link>
               </Grid>
             </Grid>
@@ -271,6 +217,21 @@ const Register: React.FunctionComponent = () => {
       <Box mt={8}>
         <Copyright />
       </Box>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={7000}
+        onClose={() => setSnackbarOpen(false)}
+      >
+        <Alert
+          variant="filled"
+          severity={snackbarType}
+          onClose={() => {
+            setSnackbarOpen(false)
+          }}
+        >
+          {snackbarText}
+        </Alert>
+      </Snackbar>
     </Container>
   )
 }

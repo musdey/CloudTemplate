@@ -5,7 +5,7 @@ const allAccess: Handler = (req: Request, res: Response) => {
 };
 
 const userBoard: Handler = (req: Request, res: Response) => {
-  return res.status(200).send("User Content.");
+  return res.status(200).json({ "data": "user" }).end();
 };
 
 const adminBoard: Handler = (req: Request, res: Response) => {

@@ -8,11 +8,9 @@ const UserValidator: Validator = new Validator({
   },
   firstName: {
     type: String,
-    required: true,
   },
   lastName: {
     type: String,
-    required: true
   },
   password: {
     type: String,
@@ -43,50 +41,6 @@ const UserValidator: Validator = new Validator({
     },
   },
 })
-const UserCheckinValidator = new Validator({
-  name: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  phoneNumber: {
-    type: String,
-    required: true,
-  },
-  shopId: {
-    type: String,
-    required: true,
-  },
-})
-
-const ShopStatisticValidator = new Validator({
-  gte: {
-    type: String,
-    required: true,
-  },
-  lt: {
-    type: String,
-    required: true,
-  },
-  shopId: {
-    type: String,
-    required: true,
-  },
-})
-
-const ForgotValidator = new Validator({
-  token: {
-    type: String,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-})
 
 const LoginValidator = new Validator({
   email: {
@@ -114,8 +68,5 @@ const getValidationErrorData = function (validationResult: ValidationError[]): s
 export {
   LoginValidator,
   UserValidator,
-  UserCheckinValidator,
-  ShopStatisticValidator,
-  ForgotValidator,
   getValidationErrorData,
 }

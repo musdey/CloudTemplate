@@ -3,14 +3,14 @@ import api from './api'
 //  https://usehooks.com/useAuth/
 
 const useProvideAuth = (): AuthContextInterface => {
-  const [shop, setShop] = useState<Shop>()
+  const [user, setUser] = useState<User>()
   const [loggedIn, setLoggedIn] = useState<boolean>(false)
 
-  const logout = async (): Promise<void> => {
+  const signout = async (): Promise<void> => {
     return await api
-      .logout()
+      .signout()
       .then(() => {
-        setShop(undefined)
+        setUser(undefined)
         setLoggedIn(false)
       })
       .catch((err) => {
@@ -18,13 +18,14 @@ const useProvideAuth = (): AuthContextInterface => {
       })
   }
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const signin = async (email: string, password: string): Promise<boolean> => {
     return new Promise(async (resolve, reject) => {
       await api
         .signin(email, password)
         .then(async (data) => {
+          localStorage.setItem("TOKEN", data.accessToken)
           console.log(data)
-          setShop(data)
+          setUser(data)
           setLoggedIn(true)
           resolve(true)
         })
@@ -35,9 +36,9 @@ const useProvideAuth = (): AuthContextInterface => {
   }
 
   return {
-    login,
-    logout,
-    shop,
+    signin,
+    signout,
+    user,
     loggedIn,
   }
 
@@ -51,19 +52,19 @@ export function ProvideAuth({ children }: { children: React.ReactNode }): JSX.El
 
 export const useAuth = (): AuthContextInterface => useContext(AuthContext)
 
-type Shop = {
+type User = {
+  firstName: string
+  lastName: string
   address: string
   email: string
-  owner: string
-  shopName: string
-  shopId: string
   phoneNumber: string
   availableSeats: string
+  userId: string
 }
 
 interface AuthContextInterface {
-  logout: () => Promise<void>
-  login: (email: string, password: string) => Promise<boolean>
-  shop?: Shop
+  signout: () => Promise<void>
+  signin: (email: string, password: string) => Promise<boolean>
+  user?: User
   loggedIn: boolean
 }

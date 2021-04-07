@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   backend:
-    container_name: glt_backend
+    container_name: ckd-backend
     build:
       context: ./backend
       dockerfile: ./Dockerfile.dev
@@ -10,11 +10,11 @@ services:
       - '3000:3000'
     volumes:
       - ./backend/src:/app/backend/src
-    env_file: 
+    env_file:
       - env_development.env
-  
+
   frontend:
-    container_name: glt_frontend
+    container_name: ckd-frontend
     build:
       context: ./frontend
       dockerfile: ./Dockerfile.dev
@@ -23,9 +23,9 @@ services:
     volumes:
       - ./frontend/src:/app/frontend/src
     stdin_open: true
-  
+
   mongodb:
-    container_name: glt_database
+    container_name: ckd-database
     build:
       context: ./mongodb
     volumes:

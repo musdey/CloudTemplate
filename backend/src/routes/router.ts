@@ -11,25 +11,27 @@ const router = express.Router()
 
 router.post('*', verifyBody)
 router.post(
-  "/api/auth/signup", verifySignUp.checkDuplicateUsernameOrEmail, signup
+  "/auth/signup", verifySignUp.checkDuplicateUsernameOrEmail, signup
 );
-router.post("/api/auth/signin", signin)
-router.post("/api/auth/signinWithOTP", signinWithOTP)
-router.post("/api/auth/requestOTP", requestOTP)
-router.get("/api/pw/reset-pw-request", passwordResetRequest)
-router.get("/api/pw/reset-pw-check", passwordResetCheckToken)
-router.post("/api/pw/reset-pw", passwordReset)
-router.get("/api/mail/verifyMail", verifyMail)
-router.get("/api/test/all", allAccess);
-router.get("/api/test/user", [authJwt.verifyToken], userBoard);
+router.post("/auth/signin", signin)
+router.post("/auth/signinWithOTP", signinWithOTP)
+router.post("/auth/requestOTP", requestOTP)
+
+router.get("/pw/reset-pw-request", passwordResetRequest)
+router.get("/pw/reset-pw-check", passwordResetCheckToken)
+router.post("/pw/reset-pw", passwordReset)
+
+router.get("/mail/verifyMail", verifyMail)
+router.get("/test/all", allAccess);
+router.get("/user", [authJwt.verifyToken], userBoard);
 router.get(
-  "/api/test/mod",
+  "/test/mod",
   [authJwt.verifyToken, authJwt.isModerator],
   moderatorBoard
 );
 
 router.get(
-  "/api/test/admin",
+  "/test/admin",
   [authJwt.verifyToken, authJwt.isAdmin],
   adminBoard
 );

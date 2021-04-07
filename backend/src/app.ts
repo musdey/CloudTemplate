@@ -10,10 +10,10 @@ import initializeTestUser from './db/initalizeTestUser'
 
 dotenv.config()
 
-const mongodbHost = 'localhost'
+const mongodbHost = 'ckd-database'
 const mongodbUser = process.env.MONGO_NON_ROOT_USERNAME || 'user'
 const mongodbPw = process.env.MONGO_NON_ROOT_PASSWORD || 'password'
-const mongodbDBName = process.env.MONGO_INITDB_DATABASE || 'database'
+const mongodbDBName = process.env.MONGO_INITDB_DATABASE || 'ckd-database'
 
 // Connect mongoose
 connectDB(mongodbHost, 27017, mongodbUser, mongodbPw, mongodbDBName, 10000)
@@ -39,7 +39,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 //app.use(express.static(path.join(__dirname, 'public')))
 
 // Setup routes
-app.use('/', router)
+app.use('/api', router)
 app.get('/hi', (req, res) => {
   res.json({ message: "Welcome to bezkoder application." });
 });

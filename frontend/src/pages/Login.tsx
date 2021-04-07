@@ -13,24 +13,12 @@ import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import { Formik, Field, Form } from 'formik'
 import { TextField } from 'formik-material-ui'
-import api from '../lib/api'
 import { useAuth } from '../lib/use-auth'
 import { Redirect } from 'react-router-dom'
 import Alert from '@material-ui/lab/Alert'
 import { Snackbar } from '@material-ui/core'
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  )
-}
+import Copyright from '../components/Copyright'
+import SocialButton from '../components/Socialbutton'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -52,25 +40,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const sigin = async function () {
-  const data = document.getElementById('shopName')!.nodeValue
-  console.log(data)
-}
-
 interface Values {
   email: string
   password: string
 }
 
 const Login: React.FunctionComponent = () => {
-  const { loggedIn, shop, login } = useAuth()
+  const { loggedIn, user, signin } = useAuth()
   const [open, setOpen] = React.useState(false)
   const classes = useStyles()
   const [buttonClickable, setButtonClickable] = React.useState(false)
-
-  const handleClick = () => {
-    setOpen(true)
-  }
 
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
     if (reason === 'clickaway') {
@@ -81,15 +60,23 @@ const Login: React.FunctionComponent = () => {
   }
 
   if (loggedIn) {
-    const url = '/shop-detail/' + shop!.shopId
+    const url = '/userDetail'
     return <Redirect to={url} />
   }
 
   const onsubmit = async (values: Values) => {
-    const success = await login(values.email, values.password)
+    const success = await signin(values.email, values.password)
     if (!success) {
       setOpen(true)
     }
+  }
+
+  const handleSocialLoginFailure = (err: any) => {
+    console.log('scoial logi nerror', err)
+  }
+
+  const handleSocialLogin = (data: any) => {
+    console.log('social login handeld ', data)
   }
 
   return (
@@ -100,7 +87,7 @@ const Login: React.FunctionComponent = () => {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Login für Betriebe
+          User Login
         </Typography>
         <Formik
           initialValues={{
@@ -172,6 +159,34 @@ const Login: React.FunctionComponent = () => {
             >
               login
             </Button>
+
+            <SocialButton
+              provider="google"
+              appId="YOUR_APP_ID"
+              onLoginSuccess={handleSocialLogin}
+              onLoginFailure={handleSocialLoginFailure}
+            >
+              Login with Google
+            </SocialButton>
+
+            <SocialButton
+              provider="facebook"
+              appId="YOUR_APP_ID"
+              onLoginSuccess={handleSocialLogin}
+              onLoginFailure={handleSocialLoginFailure}
+            >
+              Login with Facebook
+            </SocialButton>
+
+            <SocialButton
+              provider="amazon"
+              appId="YOUR_APP_ID"
+              onLoginSuccess={handleSocialLogin}
+              onLoginFailure={handleSocialLoginFailure}
+            >
+              Login with Amazon
+            </SocialButton>
+
             <Grid container spacing={2}>
               <Grid item>
                 <Link href="/password-reset" variant="body2">
@@ -190,9 +205,9 @@ const Login: React.FunctionComponent = () => {
       <Box mt={8}>
         <Copyright />
       </Box>
-      <Snackbar open={open} autoHideDuration={10000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="error">
-          Username oder Passwort falsch!
+      <Snackbar open={open} autoHideDuration={7000} onClose={handleClose}>
+        <Alert variant="filled" onClose={handleClose} severity="error">
+          E-mail or password wrong
         </Alert>
       </Snackbar>
     </Container>

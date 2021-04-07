@@ -22,11 +22,6 @@ const signup: Handler = async (req: Request, res: Response) => {
     const user = new User({
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, 8),
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      username: req.body.username || undefined,
-      phoneNumber: req.body.phoneNumber || undefined,
-      address: req.body.address || undefined
     });
 
     const createdUser = await user.save()
@@ -67,6 +62,7 @@ const signin: Handler = async (req: Request, res: Response) => {
     const token = jwt.sign({ id: user.id }, secret, {
       expiresIn: 86400 // 24 hours
     });
+    //res.cookie('Token ', token, { httpOnly: true });
     return res.status(200).send({
       id: user._id,
       username: user.username,
